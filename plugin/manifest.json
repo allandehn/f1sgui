@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "allandehn.f1",
+  "name": "F1 Weekend",
+  "version": "0.1.0",
+  "author": "Allan Dehn",
+  "license": "MIT",
+  "description": "Spoiler-free F1 weekend indicator: bar countdown to the next session, panel with the full timetable in local and circuit time. Data from OpenF1.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "F1",
+    "description": "Spoiler-free F1 weekend indicator: bar countdown to the next session, panel with the full timetable in local and circuit time.",
+    "category": "Time",
+    "allowMultiple": false,
+    "defaultSection": "tray"
+  },
+  "displayName": "F1"
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+  <!-- Checkered racing flag: chunky pole, original lite field -->
+  <path fill-rule="evenodd" d="M3.0 3.2 A1.6 1.6 0 0 1 6.2 3.2 L6.2 21.6 A1.6 1.6 0 0 1 3.0 21.6 Z M6.2 3.6 C 9.7 2.2, 13.7 4.9, 20.7 4.0 L20.7 13.2 C 14.7 14.2, 10.7 11.6, 6.2 13.0 Z M6.78 8.26 L9.87 8.53 L9.54 12.64 L6.43 12.37 Z
+    M10.28 4.36 L13.37 4.63 L13.04 8.74 L9.93 8.47 Z
+    M13.78 8.86 L16.87 9.13 L16.54 13.24 L13.43 12.97 Z
+    M17.28 4.96 L20.37 5.23 L20.04 9.34 L16.93 9.07 Z" clip-rule="evenodd"/>
+</svg>
