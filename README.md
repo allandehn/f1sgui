@@ -70,7 +70,37 @@ git clone https://github.com/allandehn/f1sgui ~/.config/omarchy/plugins/allandeh
 ```
 
 The plugin hot-reloads on file changes; `omarchy restart shell` forces a
-clean reload. Remove it again with `omarchy plugin remove allandehn.f1`.
+clean reload. See [Uninstalling](#uninstalling) for what removal keeps and
+what it deletes.
+
+## Uninstalling
+
+```bash
+omarchy plugin remove allandehn.f1
+```
+
+This disables the widget and deletes the plugin directory
+(`~/.config/omarchy/plugins/allandehn.f1`) along with everything in it.
+
+**What gets removed:**
+
+- The plugin files: `Panel.qml`, `fetch.sh`, the icons, `manifest.json`
+- The widget from the running shell, right away
+
+**What stays:**
+
+- The bar entry in `~/.config/omarchy/shell.json`. `omarchy plugin remove`
+  does not clean the `bar.layout` entry up — if you want the config spotless,
+  delete the `allandehn.f1` object from `bar.layout` by hand (the shell
+  ignores entries it can't find, so leaving it does no harm either).
+- The schedule cache at `~/.cache/f1schedule/schedule.json`. It is shared
+  with the [f1schedule](https://github.com/allandehn/f1schedule) CLI, which
+  keeps working after removal. Delete it too if you want nothing of the
+  plugin left behind:
+
+  ```bash
+  rm -r ~/.cache/f1schedule
+  ```
 
 ## The terminal CLI
 
