@@ -44,6 +44,10 @@ that cache, marks the output as cached, and warns if the file is stale relative
 to the current race weekend. Requests are paced below OpenF1's 3-per-second
 limit and retried on 429s.
 
+The plugin is fully standalone: the CLI is not a dependency, and the cache
+file is created on the plugin's first run. If the CLI is also installed, the
+two share that cache instead of fetching separately.
+
 The schedule refreshes a few times a day and whenever the panel opens;
 the countdown label ticks per minute. Outside of those moments the widget
 costs nothing.
