@@ -83,12 +83,19 @@ same cache. This GUI plugin was built to pair with it.
 
 ## Files
 
+The repo root *is* the plugin directory — that's what lets
+`omarchy plugin add` install it directly.
+
 | File | Purpose |
 |---|---|
+| `manifest.json` | Plugin metadata for the Omarchy shell |
 | `Panel.qml` | Bar widget + panel UI |
 | `fetch.sh` | OpenF1 fetch, weekend pick, cache fallback → one JSON object |
-| `manifest.json` | Plugin metadata for the Omarchy shell |
-| `flag.svg`, `*.svg`, `*.png` | Icon variants (flag is active; see right-click cycling) |
+| `flag.svg` | The bar icon (lite checkered field, chunky pole) |
+| `flag-lite.svg` | Backup: the same flag with the thinner original pole |
+| `wheel-body.png`, `wheel-hub.png` | Alloy-wheel icon (hub recolors green when a session is live) |
+| `steer-body.svg`, `steer-hub.svg`, `stopwatch.svg`, `tyre.svg`, `tyre-hub.svg` | Other icon variants; right-click the bar icon to cycle |
+| `docs/` | Screenshot for this README |
 
 ## Credits
 
