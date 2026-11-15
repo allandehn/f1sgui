@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-  <!-- Alloy wheel: tire ring + 5 spokes; hub is a separate element (wheel-hub) -->
-  <path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 1.6a8.4 8.4 0 1 1 0 16.8 8.4 8.4 0 0 1 0-16.8z" clip-rule="evenodd"/>
-  <path d="M14.63 11.39 L14.63 12.61 L18.70 13.67 L18.70 10.33 Z  M13.39 14.31 L12.24 14.69 L12.48 18.88 L15.66 17.85 Z  M10.23 14.04 L9.51 13.05 L5.60 14.58 L7.56 17.29 Z  M9.51 10.95 L10.23 9.96 L7.56 6.71 L5.60 9.42 Z  M12.24 9.31 L13.39 9.69 L15.66 6.15 L12.48 5.12 Z"/>
-</svg>

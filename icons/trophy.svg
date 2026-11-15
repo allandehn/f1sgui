@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-  <!-- Trophy with motion lines: cup, handles, base, 3 speed dashes left -->
-  <path d="M9 3h7v1.5h4V7c0 2.2-1.8 4-4 4h-.35A5 5 0 0 1 13 13.9V16h2.5c.83 0 1.5.67 1.5 1.5V20H7v-2.5c0-.83.67-1.5 1.5-1.5H11v-2.1A5 5 0 0 1 8.35 11H8c-2.2 0-4-1.8-4-4V4.5h4V3zm0 3H5.5V7c0 1.1.77 2 1.8 2.25A7 7 0 0 1 9 5.9V6zm11 0h-3.5v-.1a7 7 0 0 1 1.7 3.35c1.03-.25 1.8-1.15 1.8-2.25V6zM3 8.5h2v2H3v-2zm-2 3h3v2H1v-2zm3 3h2v2H4v-2z"/>
-</svg>

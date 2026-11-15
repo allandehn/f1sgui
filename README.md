@@ -54,21 +54,26 @@ costs nothing.
 ## Installing
 
 This is an [Omarchy](https://omarchy.org/) shell plugin (Quickshell bar
-widget). Copy or link the plugin directory into your plugins:
+widget). On Omarchy, install it the same way as any other plugin:
 
 ```bash
-git clone https://github.com/allandehn/f1sgui
-mkdir -p ~/.config/omarchy/plugins
-ln -s "$PWD/f1sgui/plugin" ~/.config/omarchy/plugins/allandehn.f1
+omarchy plugin add https://github.com/allandehn/f1sgui --enable
 ```
 
-The widget installs itself into the bar's `tray` section by default
-(`defaultSection` in `manifest.json`); move it wherever you like with
-`omarchy bar move allandehn.f1 --section right`, or edit the `bar.layout`
-entry in `~/.config/omarchy/shell.json`.
+That clones the repo, checks it, and asks where in the bar you want the
+widget. The flag lands in the bar's `tray` section by default; pick a
+different section in the prompt, or move it later with
+`omarchy bar move allandehn.f1 --section right`.
+
+On a non-Omarchy system running the Omarchy shell, clone the repo straight
+into the plugin directory instead:
+
+```bash
+git clone https://github.com/allandehn/f1sgui ~/.config/omarchy/plugins/allandehn.f1
+```
 
 The plugin hot-reloads on file changes; `omarchy restart shell` forces a
-clean reload.
+clean reload. Remove it again with `omarchy plugin remove allandehn.f1`.
 
 ## The terminal CLI
 
