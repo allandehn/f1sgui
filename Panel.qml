@@ -32,8 +32,6 @@ Panel {
   readonly property var ongoing: f1 ? currentSession(f1) : null
   readonly property bool finished: f1 ? allDone(f1) : false
 
-  readonly property string glyph: "󰒗"
-
   readonly property color foreground: bar ? bar.foreground : Commons.Color.foreground
   readonly property color urgent: bar ? bar.urgent : Commons.Color.urgent
   readonly property color dim: Qt.darker(foreground, 1.4)
@@ -227,31 +225,6 @@ Panel {
       pad(d.getHours()) + ":" + pad(d.getMinutes())
   }
 
-  // --- Bar label ---
-  // "LV GP · in 2 days, 5 hours" / "LV GP · LIVE: Sprint" / "LV GP · done".
-  // Text-only like the clock; a click never scales it.
-  readonly property string barText: {
-    if (fetching && f1 === null) return glyph
-    if (f1 === null) return ""
-    var gp = shortGp(f1.meeting || "")
-    if (finished) return gp + " · " + qsTr("done")
-    if (ongoing) return gp + " · " + qsTr("LIVE: ") + shortLabel(ongoing)
-    if (upcoming) return gp + " · " + qsTr("in ") + countdown(upcoming.start)
-    return gp
-  }
-
-  function shortGp(name) {
-    // "Las Vegas Grand Prix" -> "LV GP"; testing stays as-is.
-    if (!name) return ""
-    if (name.indexOf("Testing") !== -1) return name
-    var words = name.replace(" Grand Prix", "").split(" ")
-    var ini = ""
-    for (var i = 0; i < words.length; i++) ini += words[i].charAt(0).toUpperCase()
-    return ini + " GP"
-  }
-
-  function refreshBar() { /* barText is a binding; nothing to do */ }
-
   // Tick: countdown to the minute while a session is upcoming; every second
   // is pointless. When live, tick every 30s to keep "LIVE: X" fresh.
   Timer {
@@ -304,29 +277,8 @@ Panel {
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
 
-  // Always-on alloy wheel: body keeps the bar foreground, the hub turns
-  // theme green while a session is live. Icon is user-drawn SVG, monochrome,
-  // so it follows the theme like every other bar icon.
-  readonly property color liveGreen: liveGreenValue !== "" ? liveGreenValue : "#a7c080"
-
-  FileView {
-    id: greenColor
-    path: (Quickshell.env("XDG_STATE_HOME") || (Quickshell.env("HOME") + "/.local/state")) + "/omarchy/current/theme/colors.toml"
-    printErrors: false
-    watchChanges: true
-    onLoaded: {
-      // Scan for the theme's green key, same line format Commons.Color scans.
-      var lines = String(text() || "").split("\n")
-      for (var i = 0; i < lines.length; i++) {
-        var m = lines[i].match(/^\s*green\s*=\s*["']?(#[0-9A-Fa-f]{6})/)
-        if (m) { root.liveGreenValue = m[1]; return }
-      }
-      root.liveGreenValue = ""
-    }
-  }
-  property string liveGreenValue: ""
-
-  readonly property bool sessionLive: root.ongoing !== null
+  // Bar icon: the checkered flag, monochrome, theme-following. No state
+  // display — the tooltip and the panel carry the details.
 
   WidgetButton {
     id: button
@@ -349,37 +301,12 @@ Panel {
     }
     onPressed: function(b) {
       if (b === Qt.MiddleButton) root.refresh()
-      else if (b === Qt.RightButton) button.cycleIcon()
       else root.toggle()
     }
 
-    // Icon variants (body SVG + optional hub SVG). Hub exists on tyre and
-    // steering wheel; other icons render the body alone. Right-click cycles
-    // through them for picking, middle click refreshes, left click opens.
-    readonly property var iconSet: [
-      { body: "wheel-body.png", hub: "wheel-hub.png",   name: "wheel" },
-      { body: "flag.svg",       hub: "",                name: "flag" },
-      { body: "steer-body.svg", hub: "steer-hub.svg",   name: "steering" },
-      { body: "helmet.svg",     hub: "",                name: "helmet" },
-      { body: "stopwatch.svg",  hub: "",                name: "stopwatch" }
-    ]
-    readonly property int iconIndex: {
-      var name = root.setting("icon", "wheel")
-      for (var i = 0; i < iconSet.length; i++) if (iconSet[i].name === name) return i
-      return 0
-    }
-    readonly property var current: iconSet[iconIndex]
-
-    function cycleIcon() {
-      var next = iconSet[(iconIndex + 1) % iconSet.length]
-      var entry = { id: root.moduleName }
-      for (var key in root.settings) if (key !== "id") entry[key] = root.settings[key]
-      entry.icon = next.name
-      root.settings = entry
-      if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
-        root.bar.shell.updateEntryInline(root.moduleName, entry)
-    }
-
+    // The flag SVG paints in currentColor-like fashion via alpha mask:
+    // Tray.qml's pattern — colorization keeps source lightness, so a black
+    // fill would stay black.
     Item {
       id: iconHost
       property real size: Style.bar.iconSize
@@ -388,12 +315,10 @@ Panel {
       anchors.centerIn: parent
       scale: button.pressScale
 
-      // Paint colors through the SVG alpha, Tray.qml's pattern: colorization
-      // keeps source lightness, so a black fill would stay black.
       Image {
-        id: bodyImage
+        id: flagImage
         anchors.fill: parent
-        source: Qt.resolvedUrl(button.current.body)
+        source: Qt.resolvedUrl("flag.svg")
         sourceSize: Qt.size(iconHost.size * 2, iconHost.size * 2)
         mipmap: true
         visible: false
@@ -405,28 +330,7 @@ Panel {
         layer.enabled: true
         layer.effect: MultiEffect {
           maskEnabled: true
-          maskSource: bodyImage
-          maskThresholdMin: 0.5
-          maskSpreadAtMin: 1.0
-        }
-      }
-      Image {
-        id: hubImage
-        anchors.fill: parent
-        source: button.current.hub !== "" ? Qt.resolvedUrl(button.current.hub) : ""
-        sourceSize: Qt.size(iconHost.size * 2, iconHost.size * 2)
-        mipmap: true
-        visible: false
-        layer.enabled: true
-      }
-      Rectangle {
-        anchors.fill: parent
-        color: root.sessionLive ? root.liveGreen : root.foreground
-        visible: button.current.hub !== ""
-        layer.enabled: button.current.hub !== ""
-        layer.effect: MultiEffect {
-          maskEnabled: true
-          maskSource: hubImage
+          maskSource: flagImage
           maskThresholdMin: 0.5
           maskSpreadAtMin: 1.0
         }

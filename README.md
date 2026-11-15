@@ -15,9 +15,6 @@ not change with the session state — the tooltip and the panel carry the
 details:
 
 - **Left click** — open/close the timetable panel
-- **Right click** — cycle through alternative icons (the other candidates
-  drawn during development: alloy wheel, steering wheel, stopwatch; your own
-  `wheel.png` and this flag). The choice persists in `shell.json`.
 - **Middle click** — refresh the schedule now
 
 Hovering shows the current meeting, circuit, and the next session countdown.
@@ -91,10 +88,8 @@ The repo root *is* the plugin directory — that's what lets
 | `manifest.json` | Plugin metadata for the Omarchy shell |
 | `Panel.qml` | Bar widget + panel UI |
 | `fetch.sh` | OpenF1 fetch, weekend pick, cache fallback → one JSON object |
-| `flag.svg` | The bar icon (lite checkered field, chunky pole) |
-| `flag-lite.svg` | Backup: the same flag with the thinner original pole |
-| `wheel-body.png`, `wheel-hub.png` | Alloy-wheel icon (hub recolors green when a session is live) |
-| `steer-body.svg`, `steer-hub.svg`, `stopwatch.svg`, `tyre.svg`, `tyre-hub.svg` | Other icon variants; right-click the bar icon to cycle |
+| `flag.svg` | The bar icon (checkered flag) |
+| `helmet.png` | The helmet mark in the panel's hero |
 | `docs/` | Screenshot for this README |
 
 ## Credits
