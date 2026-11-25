@@ -56,7 +56,7 @@ Panel {
   // circuit column to keep it compact.
   function circuitTime(epoch, gmt) {
     var d = new Date((epoch + offsetSeconds(gmt)) * 1000)
-    return fmtDay(d) + " " + pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes())
+    return fmtDay(d, true) + " " + pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes())
   }
 
   function localTime(epoch) {
@@ -72,10 +72,13 @@ Panel {
     return fmtDay(d) + " " + pad(h) + ":" + pad(d.getMinutes()) + suffix
   }
 
-  function fmtDay(d) {
+  function fmtDay(d, utc) {
     var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    return days[d.getDay()] + " " + pad(d.getDate()) + " " + months[d.getMonth()]
+    var day = utc ? d.getUTCDay() : d.getDay()
+    var date = utc ? d.getUTCDate() : d.getDate()
+    var month = utc ? d.getUTCMonth() : d.getMonth()
+    return days[day] + " " + pad(date) + " " + months[month]
   }
 
   function pad(n) { return (n < 10 ? "0" : "") + n }
@@ -154,6 +157,11 @@ Panel {
   function refresh() {
     if (fetching) return
     fetching = true
+    fetchProc.out = ""
+    fetchProc.err = ""
+    fetchProc.exitCode = null
+    fetchProc.outDone = false
+    fetchProc.exited = false
     fetchProc.running = true
   }
 
@@ -173,6 +181,8 @@ Panel {
         try {
           root.f1 = JSON.parse(out)
           root.lastError = ""
+          root.staleCache = false
+          root.fetchNote = ""
           // cached flag and staleness, mirroring CacheSavedDuringWeekend
           if (root.f1.cached) {
             var saved = root.f1.saved_at ? new Date(root.f1.saved_at) : null
@@ -194,8 +204,6 @@ Panel {
               }
             }
             root.fetchNote = note
-          } else {
-            root.staleCache = false
           }
         } catch (e) {
           root.lastError = qsTr("bad data from fetch") + ": " + e
@@ -205,7 +213,6 @@ Panel {
       } else {
         root.lastError = qsTr("fetch failed (exit %1)").arg(exitCode)
       }
-      root.refreshBar()
     }
     stdout: StdioCollector {
       waitForEnd: true
@@ -277,7 +284,7 @@ Panel {
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
 
-  // Bar icon: the checkered flag, monochrome, theme-following. No state
+  // Bar icon: racing helmet, monochrome, theme-following. No state
   // display — the tooltip and the panel carry the details.
 
   WidgetButton {
@@ -304,11 +311,12 @@ Panel {
       else root.toggle()
     }
 
-    // The flag SVG paints in currentColor-like fashion via alpha mask:
+    // The bar SVG paints in currentColor-like fashion via alpha mask:
     // Tray.qml's pattern — colorization keeps source lightness, so a black
     // fill would stay black.
     Item {
       id: iconHost
+      property string iconFile: "helmet.svg" // rollback: "flag.svg"
       property real size: Style.bar.iconSize
       width: size
       height: size
@@ -316,10 +324,11 @@ Panel {
       scale: button.pressScale
 
       Image {
-        id: flagImage
+        id: barIconImage
         anchors.fill: parent
-        source: Qt.resolvedUrl("flag.svg")
+        source: Qt.resolvedUrl(iconHost.iconFile)
         sourceSize: Qt.size(iconHost.size * 2, iconHost.size * 2)
+        fillMode: Image.PreserveAspectFit
         mipmap: true
         visible: false
         layer.enabled: true
@@ -330,7 +339,7 @@ Panel {
         layer.enabled: true
         layer.effect: MultiEffect {
           maskEnabled: true
-          maskSource: flagImage
+          maskSource: barIconImage
           maskThresholdMin: 0.5
           maskSpreadAtMin: 1.0
         }
@@ -388,13 +397,15 @@ Panel {
                     Image {
                       id: heroHelmet
                       anchors.fill: parent
-                      source: Qt.resolvedUrl("helmet.png")
+                      source: Qt.resolvedUrl("helmet.svg")
                       sourceSize: Qt.size(parent.width * 2, parent.height * 2)
+                      fillMode: Image.PreserveAspectFit
                       mipmap: true
                       visible: false
+                      layer.enabled: true
                     }
-                    // Recolor through alpha so the helmet follows the theme
-                    // like every other icon (source fill is a fixed cream).
+                    // Recolor through an alpha mask so the helmet follows the
+                    // live theme like the bar icon.
                     Rectangle {
                       anchors.fill: parent
                       color: root.foreground
