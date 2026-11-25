@@ -1,7 +1,7 @@
 # f1sgui
 
-A spoiler-free Formula 1 schedule for the Omarchy desktop. A small checkered
-flag sits in the status bar, left of the tray area. Click it and a panel opens
+A spoiler-free Formula 1 schedule for the Omarchy desktop. A small racing
+helmet sits in the status bar, left of the tray area. Click it and a panel opens
 with the current race weekend: which session is live or next, and the full
 timetable in both your local time and the circuit's local time — with no
 results, standings, or driver data anywhere, so the weekend stays unspoiled.
@@ -10,7 +10,7 @@ results, standings, or driver data anywhere, so the weekend stays unspoiled.
 
 ## The bar icon
 
-The checkered flag is always visible and follows the Omarchy theme. It does
+The helmet icon is always visible and follows the Omarchy theme. It does
 not change with the session state — the tooltip and the panel carry the
 details:
 
@@ -62,7 +62,7 @@ omarchy plugin add https://github.com/allandehn/f1sgui --enable
 ```
 
 That clones the repo, checks it, and asks where in the bar you want the
-widget. The flag lands in the bar's `tray` section by default; pick a
+widget. The helmet lands in the bar's `tray` section by default; pick a
 different section in the prompt, or move it later with
 `omarchy bar move allandehn.f1 --section right`.
 
@@ -122,8 +122,8 @@ The repo root *is* the plugin directory — that's what lets
 | `manifest.json` | Plugin metadata for the Omarchy shell |
 | `Panel.qml` | Bar widget + panel UI |
 | `fetch.sh` | OpenF1 fetch, weekend pick, cache fallback → one JSON object |
-| `flag.svg` | The bar icon (checkered flag) |
-| `helmet.png` | The helmet mark in the panel's hero |
+| `flag.svg` | Alternate bar icon (checkered flag, kept for rollback) |
+| `helmet.svg` | The helmet icon in the status bar and panel hero |
 | `docs/` | Screenshot for this README |
 
 ## Credits

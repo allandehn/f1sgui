@@ -44,8 +44,8 @@ M_JSON2=""
 S_JSON2=""
 
 if fetch_year "$year"; then
-	if [ -n "$year2" ] && fetch_year "$year2"; then
-		M_JSON=$(printf '%s%s' "$M_JSON" "$M_JSON2" | jq -s 'add')
+	if [ -n "$year2" ]; then
+		fetch_year "$year2" || true
 	fi
 else
 	M_JSON=""
@@ -73,18 +73,24 @@ if [ -n "$M_JSON" ]; then
 	this_year=$(date +%Y)
 	next_year=$((this_year + 1))
 	if [ -f "$CACHE" ]; then
-		jq --argjson m "${M_JSON:-\[\]}" --argjson s "${S_JSON:-\[\]}" --arg m2 "$M_JSON2" --arg s2 "$S_JSON2" \
+		jq --argjson m "${M_JSON:-[]}" --argjson s "${S_JSON:-[]}" --arg m2 "$M_JSON2" --arg s2 "$S_JSON2" \
 			--arg ty "$this_year" --arg ny "$next_year" --arg now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
 			.meetings[$ty] = $m | .sessions[$ty] = $s
 			| (if $m2 != "" then .meetings[$ny] = ($m2 | fromjson) else . end)
 			| (if $s2 != "" then .sessions[$ny] = ($s2 | fromjson) else . end)
 			| .saved_at = $now' "$CACHE" >"$tmp" 2>/dev/null && mv "$tmp" "$CACHE" || { rm -f "$tmp"; echo "cache write failed" >&2; }
 	else
-		jq -n --argjson m "${M_JSON:-\[\]}" --argjson s "${S_JSON:-\[\]}" --arg m2 "$M_JSON2" --arg s2 "$S_JSON2" \
+		jq -n --argjson m "${M_JSON:-[]}" --argjson s "${S_JSON:-[]}" --arg m2 "$M_JSON2" --arg s2 "$S_JSON2" \
 			--arg ty "$this_year" --arg ny "$next_year" --arg now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
 			{saved_at: $now,
 			 meetings: (if $m2 != "" then {($ty): $m, ($ny): ($m2 | fromjson)} else {($ty): $m} end),
 			 sessions: (if $s2 != "" then {($ty): $s, ($ny): ($s2 | fromjson)} else {($ty): $s} end)}' >"$tmp" 2>/dev/null && mv "$tmp" "$CACHE" || { rm -f "$tmp"; echo "cache write failed" >&2; }
+	fi
+	if [ -n "$M_JSON2" ]; then
+		M_JSON=$(printf '%s\n%s\n' "$M_JSON" "$M_JSON2" | jq -s 'add')
+	fi
+	if [ -n "$S_JSON2" ]; then
+		S_JSON=$(printf '%s\n%s\n' "$S_JSON" "$S_JSON2" | jq -s 'add')
 	fi
 else
 	if [ -f "$CACHE" ]; then
@@ -101,7 +107,7 @@ fi
 # Pick the active weekend, exactly like weekendFromData. jq does the whole
 # pipeline in one pass: build meeting map, join sessions, bucket weekends.
 # Debug hook: F1_FAKE_LIVE=1 marks the next session as running now (for UI tests).
-OUT=$(jq -n --argjson meetings "${M_JSON:-\[\]}" --argjson sessions "${S_JSON:-\[\]}" \
+OUT=$(jq -n --argjson meetings "${M_JSON:-[]}" --argjson sessions "${S_JSON:-[]}" \
 	--arg now "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --argjson cached "$cached" --arg saved_at "$saved_at" '
   def israce: ([.meeting_name | ascii_downcase] | contains(["testing"]) | not);
   ($now | fromdateiso8601) as $now
